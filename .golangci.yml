@@ -27,21 +27,21 @@ linters:
     - golint
     - rowserrcheck
     - stylecheck
-#    - gosec
+    - gosec
     - interfacer
     - unconvert
     - dupl
-#    - goconst
+    - goconst
     - gocyclo
     - gocognit
-    - asciicheck
+#    - asciicheck
     - gofmt
 #    - simplificatio
     - goimports
     - maligned
     - depguard
     - misspell
-#    - lll
+    - lll
     - unparam
     - dogsled
     - nakedret
@@ -57,8 +57,8 @@ linters:
     - goprintffuncname
 #    - gomnd
 #    - goerr113
-    - gomodguard
-    - godot
+#    - gomodguard
+#    - godot
 #    - testpackage
-    - nestif
-    - nolintlint
+#    - nestif
+#    - nolintlint
