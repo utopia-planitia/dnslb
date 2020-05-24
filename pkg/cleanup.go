@@ -14,12 +14,14 @@ func Cleanup(subdomain string, ports []string) error {
 	if err != nil {
 		return fmt.Errorf("init api: %v", err)
 	}
+
 	log.Println("connected api")
 
 	zone, zoneID, err := loadZoneID(api)
 	if err != nil {
 		return fmt.Errorf("load zone: %v", err)
 	}
+
 	log.Printf("connected zone: %v", zone)
 
 	domain := subdomain + "." + zone
@@ -36,15 +38,18 @@ func Cleanup(subdomain string, ports []string) error {
 
 	for _, record := range records {
 		log.Printf("record %v %v", record.Type, record.Content)
+
 		switch record.Type {
 		case "A":
 			ipv4 := &ipv4{ip: ip{addr: record.Content}}
+
 			err := ipv4.cleanup(api, zoneID, domain, ports)
 			if err != nil {
 				log.Printf("cleanup record %s: %v", record.Content, err)
 			}
 		case "AAAA":
 			ipv6 := &ipv6{ip: ip{addr: record.Content}}
+
 			err := ipv6.cleanup(api, zoneID, domain, ports)
 			if err != nil {
 				log.Printf("cleanup record %s: %v", record.Content, err)

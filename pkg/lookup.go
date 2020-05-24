@@ -7,37 +7,7 @@ import (
 	"time"
 )
 
-func myIPs(IPv4, IPv6 bool) ([]string, error) {
-	if !IPv4 && !IPv6 {
-		return []string{}, fmt.Errorf("at least one of IPv4 and IPv6 need to be selected")
-	}
-
-	ips := []string{}
-
-	if IPv4 {
-		ipv4, err := myIP("tcp4")
-		if err != nil {
-			return []string{}, fmt.Errorf("lookup IPv4 address: %v", err)
-		}
-
-		ips = append(ips, ipv4)
-	}
-
-	if IPv6 {
-		ipv6, err := myIP("tcp6")
-		if err != nil {
-			return []string{}, fmt.Errorf("lookup IPv6 address: %v", err)
-		}
-
-		ips = append(ips, ipv6)
-	}
-
-	return ips, nil
-}
-
-// based on https://community.cloudflare.com/t/can-1-1-1-1-be-used-to-find-out-ones-public-ip-address/14971/5
-// dig -6 TXT +short o-o.myaddr.l.google.com @ns1.google.com
-// dig -4 TXT +short o-o.myaddr.l.google.com @ns1.google.com
+// Based on https://community.cloudflare.com/t/can-1-1-1-1-be-used-to-find-out-ones-public-ip-address/14971/5.
 func myIP(network string) (string, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()

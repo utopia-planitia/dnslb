@@ -88,6 +88,7 @@ func (i ip) remove(api *cloudflare.API, zoneID, domain string) error {
 
 func ensureRecord(api *cloudflare.API, zoneID, domain, ip, typee string) error {
 	log.Printf("ensure IP: %v", ip)
+
 	records, err := api.DNSRecords(zoneID, cloudflare.DNSRecord{
 		Name:    domain,
 		Content: ip,
@@ -109,6 +110,7 @@ func ensureRecord(api *cloudflare.API, zoneID, domain, ip, typee string) error {
 	if err != nil {
 		return fmt.Errorf("create record %v/%v: %v", domain, ip, err)
 	}
+
 	log.Println("entry created")
 
 	return nil

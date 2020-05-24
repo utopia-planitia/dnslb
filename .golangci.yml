@@ -1,0 +1,64 @@
+
+run:
+  timeout: 5m
+
+issues:
+  exclude:
+     - Using the variable on range scope `tt` in function literal
+  exclude-rules:
+    - path: _test\.go
+      linters:
+        - dupl
+
+linters:
+  enable:
+    - govet
+    - errcheck
+    - staticcheck
+    - unused
+    - gosimple
+    - structcheck
+    - varcheck
+    - ineffassign
+    - deadcode
+    - typecheck
+
+    - bodyclose
+    - golint
+    - rowserrcheck
+    - stylecheck
+#    - gosec
+    - interfacer
+    - unconvert
+    - dupl
+#    - goconst
+    - gocyclo
+    - gocognit
+    - asciicheck
+    - gofmt
+#    - simplificatio
+    - goimports
+    - maligned
+    - depguard
+    - misspell
+#    - lll
+    - unparam
+    - dogsled
+    - nakedret
+    - prealloc
+    - scopelint
+    - gocritic
+    - gochecknoinits
+    - gochecknoglobals
+    - godox
+#    - funlen
+    - whitespace
+    - wsl
+    - goprintffuncname
+#    - gomnd
+#    - goerr113
+    - gomodguard
+    - godot
+#    - testpackage
+    - nestif
+    - nolintlint

@@ -10,17 +10,19 @@ import (
 )
 
 // Endpoint runs the life cycle of a endpoint.
-func Endpoint(subdomain string, ports []string, IPv4, IPv6 bool) error {
+func Endpoint(subdomain string, ports []string, ipv4Enabled, ipv6Enabled bool) error {
 	api, err := initAPI(os.Getenv("CF_API_TOKEN"), os.Getenv("CF_API_KEY"), os.Getenv("CF_API_EMAIL"))
 	if err != nil {
 		return fmt.Errorf("init api: %v", err)
 	}
+
 	log.Println("connected api")
 
 	zone, zoneID, err := loadZoneID(api)
 	if err != nil {
 		return fmt.Errorf("load zone: %v", err)
 	}
+
 	log.Printf("connected zone: %v", zone)
 
 	domain := subdomain + "." + zone
@@ -28,26 +30,9 @@ func Endpoint(subdomain string, ports []string, IPv4, IPv6 bool) error {
 
 	log.Printf("ports: %v", ports)
 
-	if !IPv4 && !IPv6 {
-		return fmt.Errorf("at least one of --ipv4 and --ipv6 need to be enabled")
-	}
-
-	ipv4, err := myIPv4(IPv4)
+	ipv4, ipv6, err := detectIPs(ipv4Enabled, ipv6Enabled)
 	if err != nil {
-		return fmt.Errorf("lookup IPv4 address: %v", err)
-	}
-
-	ipv6, err := myIPv6(IPv6)
-	if err != nil {
-		return fmt.Errorf("lookup IPv6 address: %v", err)
-	}
-
-	if ipv4 != nil {
-		log.Printf("ipv4: %v", ipv4.addr)
-	}
-
-	if ipv6 != nil {
-		log.Printf("ipv6: %v", ipv4.addr)
+		return fmt.Errorf("detect local IPs: %v", err)
 	}
 
 	ticker := time.NewTicker(10 * time.Second)
@@ -57,14 +42,14 @@ func Endpoint(subdomain string, ports []string, IPv4, IPv6 bool) error {
 	signal.Notify(sigs, syscall.SIGINT, syscall.SIGTERM)
 
 	for {
-		if ipv4 != nil {
+		if ipv4Enabled {
 			err := ipv4.maintain(api, zoneID, domain, ports)
 			if err != nil {
 				log.Println(err)
 			}
 		}
 
-		if ipv6 != nil {
+		if ipv6Enabled {
 			err = ipv6.maintain(api, zoneID, domain, ports)
 			if err != nil {
 				log.Println(err)
@@ -75,14 +60,14 @@ func Endpoint(subdomain string, ports []string, IPv4, IPv6 bool) error {
 		case <-sigs:
 			log.Println("shutting down")
 
-			if ipv4 != nil {
+			if ipv4Enabled {
 				err = ipv4.remove(api, zoneID, domain)
 				if err != nil {
 					log.Printf("remove IPv4 %v: %v", ipv4.addr, err)
 				}
 			}
 
-			if ipv6 != nil {
+			if ipv6Enabled {
 				err = ipv6.remove(api, zoneID, domain)
 				if err != nil {
 					log.Printf("remove IPv6 %v: %v", ipv4.addr, err)
@@ -94,32 +79,41 @@ func Endpoint(subdomain string, ports []string, IPv4, IPv6 bool) error {
 
 			return nil
 		case <-ticker.C:
+			continue
 		}
 	}
 }
 
-func myIPv4(enabled bool) (*ipv4, error) {
-	if !enabled {
-		return nil, nil
+func detectIPs(ipv4Enabled, ipv6Enabled bool) (*ipv4, *ipv6, error) {
+	if !ipv4Enabled && !ipv6Enabled {
+		return nil, nil, fmt.Errorf("at least one of --ipv4 and --ipv6 need to be enabled")
 	}
 
-	ip4, err := myIP("tcp4")
-	if err != nil {
-		return nil, err
+	var addr4 *ipv4
+
+	var addr6 *ipv6
+
+	if ipv4Enabled {
+		addr, err := myIP("tcp4")
+		if err != nil {
+			return nil, nil, fmt.Errorf("lookup IPv4 address: %v", err)
+		}
+
+		log.Printf("ipv4: %v", addr)
+
+		addr4 = &ipv4{ip: ip{addr: addr}}
 	}
 
-	return &ipv4{ip: ip{addr: ip4}}, nil
-}
+	if ipv6Enabled {
+		addr, err := myIP("tcp6")
+		if err != nil {
+			return nil, nil, fmt.Errorf("lookup IPv6 address: %v", err)
+		}
 
-func myIPv6(enabled bool) (*ipv6, error) {
-	if !enabled {
-		return nil, nil
+		log.Printf("ipv6: %v", addr)
+
+		addr6 = &ipv6{ip: ip{addr: addr}}
 	}
 
-	ip6, err := myIP("tcp6")
-	if err != nil {
-		return nil, err
-	}
-
-	return &ipv6{ip: ip{addr: ip6}}, nil
+	return addr4, addr6, nil
 }

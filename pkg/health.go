@@ -12,13 +12,12 @@ func allHealthyTCP(host string, ports []string) (bool, error) {
 			return false, err
 		}
 	}
+
 	return true, nil
 }
 
 func isHealthyTCP(host, port string) (bool, error) {
-	timeout := time.Second
-	//	conn, err := net.DialTimeout("tcp", net.JoinHostPort(host, port), timeout)
-	conn, err := net.DialTimeout("tcp", net.JoinHostPort("127.0.0.1", port), timeout)
+	conn, err := net.DialTimeout("tcp", net.JoinHostPort(host, port), time.Second)
 	if err != nil {
 		return false, err
 	}
