@@ -12,8 +12,8 @@ func main() {
 	app := &cli.App{
 		Flags: []cli.Flag{
 			&cli.StringSliceFlag{
-				Name:     "ports",
-				Usage:    "Ports to check for health.",
+				Name:     "port",
+				Usage:    "Port to check for health. Can be defined multiple times.",
 				Required: true,
 			},
 		},

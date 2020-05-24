@@ -26,8 +26,8 @@ In case the node shut down without warning, a cronjob checks all DNS endpoints a
 
 ### Arguments
 
-| Name         | Default value | Required | Purpose                                                       |
+| Name          | Default value | Required | Purpose                                                       |
 |---------------|---------------|----------|---------------------------------------------------------------|
-| --ports       |               | yes      | Ports required to be open. Can be used multiple times.        |
+| --port        |               | yes      | Ports required to be open. Can be used multiple times.        |
 | --ipv4        | true          | no       | Enable or disable IPv4 for networking.                        |
 | --ipv6        | true          | no       | Enable or disable IPv6 for networking.                        |
