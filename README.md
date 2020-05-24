@@ -16,18 +16,18 @@ In case the node shut down without warning, a cronjob checks all DNS endpoints a
 
 ### System variables
 
-| Name         | Default value | Required | Purpose                                                       |
-|--------------|---------------|----------|---------------------------------------------------------------|
-| CF_API_TOKEN | ""            |          | Used to log in to cloudflares API.                            |
-| CF_API_KEY   | ""            |          | Used together with CF_API_EMAIL to log in to cloudflares API. |
-| CF_API_EMAIL | ""            |          | Used together with CF_API_KEY to log in to cloudflares API.   |
-| CF_ZONE      |               | yes      | Defines the Domain to use.                                    |
+| Name          | Default value | Required | Purpose                                                       |
+|---------------|---------------|----------|---------------------------------------------------------------|
+| CF_API_TOKEN  | ""            |          | Used to log in to cloudflares API.                            |
+| CF_API_KEY    | ""            |          | Used together with CF_API_EMAIL to log in to cloudflares API. |
+| CF_API_EMAIL  | ""            |          | Used together with CF_API_KEY to log in to cloudflares API.   |
+| CF_ZONE       |               | yes      | Defines the Domain to use.                                    |
+| CF_SUBDOMAIN  |               | yes      |                                                               |
 
 ### Arguments
 
 | Name         | Default value | Required | Purpose                                                       |
-|--------------|---------------|----------|---------------------------------------------------------------|
-| --subdomain  |               | yes      |                                                               |
-| --ports      |               | yes      | Ports required to be open. Can be used multiple times.        |
-| --ipv4       | true          | no       | Enable or disable IPv4 for networking.                        |
-| --ipv6       | true          | no       | Enable or disable IPv6 for networking.                        |
+|---------------|---------------|----------|---------------------------------------------------------------|
+| --ports       |               | yes      | Ports required to be open. Can be used multiple times.        |
+| --ipv4        | true          | no       | Enable or disable IPv4 for networking.                        |
+| --ipv6        | true          | no       | Enable or disable IPv6 for networking.                        |

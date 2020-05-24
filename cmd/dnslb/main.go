@@ -11,11 +11,6 @@ import (
 func main() {
 	app := &cli.App{
 		Flags: []cli.Flag{
-			&cli.StringFlag{
-				Name:     "subdomain",
-				Usage:    "Subdomain to add IPs to.",
-				Required: true,
-			},
 			&cli.StringSliceFlag{
 				Name:     "ports",
 				Usage:    "Ports to check for health.",
@@ -29,24 +24,24 @@ func main() {
 				Flags: []cli.Flag{
 					&cli.BoolFlag{
 						Name:  "ipv4",
-						Usage: "IPv4 to use for load balancing. Options are IP, 'auto' and 'off'.",
+						Usage: "use IPv4 for load balancing.",
 						Value: true,
 					},
 					&cli.BoolFlag{
 						Name:  "ipv6",
-						Usage: "IPv6 to use for load balancing. Options are a IPv6, 'auto' and 'off'.",
+						Usage: "use IPv6 for load balancing.",
 						Value: true,
 					},
 				},
 				Action: func(c *cli.Context) error {
-					return dnslb.Endpoint(c.String("subdomain"), c.StringSlice("ports"), c.Bool("ipv4"), c.Bool("ipv6"))
+					return dnslb.Endpoint(c.StringSlice("ports"), c.Bool("ipv4"), c.Bool("ipv6"))
 				},
 			},
 			{
 				Name:  "cleanup",
 				Usage: "check endpoints and remove unhealthy entries",
 				Action: func(c *cli.Context) error {
-					return dnslb.Cleanup(c.String("subdomain"), c.StringSlice("ports"))
+					return dnslb.Cleanup(c.StringSlice("ports"))
 				},
 			},
 		},

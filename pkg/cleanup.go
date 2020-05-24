@@ -9,7 +9,7 @@ import (
 )
 
 // Cleanup removes unhealthy endpoints.
-func Cleanup(subdomain string, ports []string) error {
+func Cleanup(ports []string) error {
 	api, err := initAPI(os.Getenv("CF_API_TOKEN"), os.Getenv("CF_API_KEY"), os.Getenv("CF_API_EMAIL"))
 	if err != nil {
 		return fmt.Errorf("init api: %v", err)
@@ -23,6 +23,13 @@ func Cleanup(subdomain string, ports []string) error {
 	}
 
 	log.Printf("connected zone: %v", zone)
+
+	subdomain := os.Getenv("CF_SUBDOMAIN")
+	if subdomain == "" {
+		return fmt.Errorf("CF_SUBDOMAIN needs to be set")
+	}
+
+	log.Printf("subdomain: %v", subdomain)
 
 	domain := subdomain + "." + zone
 	log.Printf("domain: %v", domain)

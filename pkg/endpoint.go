@@ -10,7 +10,7 @@ import (
 )
 
 // Endpoint runs the life cycle of a endpoint.
-func Endpoint(subdomain string, ports []string, ipv4Enabled, ipv6Enabled bool) error {
+func Endpoint(ports []string, ipv4Enabled, ipv6Enabled bool) error {
 	api, err := initAPI(os.Getenv("CF_API_TOKEN"), os.Getenv("CF_API_KEY"), os.Getenv("CF_API_EMAIL"))
 	if err != nil {
 		return fmt.Errorf("init api: %v", err)
@@ -24,6 +24,13 @@ func Endpoint(subdomain string, ports []string, ipv4Enabled, ipv6Enabled bool) e
 	}
 
 	log.Printf("connected zone: %v", zone)
+
+	subdomain := os.Getenv("CF_SUBDOMAIN")
+	if subdomain == "" {
+		return fmt.Errorf("CF_SUBDOMAIN needs to be set")
+	}
+
+	log.Printf("subdomain: %v", subdomain)
 
 	domain := subdomain + "." + zone
 	log.Printf("domain: %v", domain)
