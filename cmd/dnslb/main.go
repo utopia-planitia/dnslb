@@ -34,14 +34,14 @@ func main() {
 					},
 				},
 				Action: func(c *cli.Context) error {
-					return dnslb.Endpoint(c.StringSlice("ports"), c.Bool("ipv4"), c.Bool("ipv6"))
+					return dnslb.Endpoint(c.StringSlice("port"), c.Bool("ipv4"), c.Bool("ipv6"))
 				},
 			},
 			{
 				Name:  "cleanup",
 				Usage: "check endpoints and remove unhealthy entries",
 				Action: func(c *cli.Context) error {
-					return dnslb.Cleanup(c.StringSlice("ports"))
+					return dnslb.Cleanup(c.StringSlice("port"))
 				},
 			},
 		},
