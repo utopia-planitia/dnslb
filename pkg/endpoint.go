@@ -7,6 +7,8 @@ import (
 	"os/signal"
 	"syscall"
 	"time"
+
+	"github.com/cloudflare/cloudflare-go"
 )
 
 // Endpoint runs the life cycle of a endpoint.
@@ -49,46 +51,52 @@ func Endpoint(ports []string, ipv4Enabled, ipv6Enabled bool) error {
 	signal.Notify(sigs, syscall.SIGINT, syscall.SIGTERM)
 
 	for {
-		if ipv4Enabled {
-			err := ipv4.maintain(api, zoneID, domain, ports)
-			if err != nil {
-				log.Println(err)
-			}
-		}
-
-		if ipv6Enabled {
-			err = ipv6.maintain(api, zoneID, domain, ports)
-			if err != nil {
-				log.Println(err)
-			}
-		}
-
+		maintain(api, zoneID, domain, ports, ipv4, ipv6)
 		select {
 		case <-sigs:
-			log.Println("shutting down")
-
-			if ipv4Enabled {
-				err = ipv4.remove(api, zoneID, domain)
-				if err != nil {
-					log.Printf("remove IPv4 %v: %v", ipv4.addr, err)
-				}
-			}
-
-			if ipv6Enabled {
-				err = ipv6.remove(api, zoneID, domain)
-				if err != nil {
-					log.Printf("remove IPv6 %v: %v", ipv4.addr, err)
-				}
-			}
-
-			log.Println("await DNS TTL (120 seconds)")
-			time.Sleep(120 * time.Second)
-
+			shutdown(api, zoneID, domain, ipv4, ipv6)
 			return nil
 		case <-ticker.C:
 			continue
 		}
 	}
+}
+
+func maintain(api *cloudflare.API, zoneID, domain string, ports []string, ipv4 *ipv4, ipv6 *ipv6) {
+	if ipv4 != nil {
+		err := ipv4.maintain(api, zoneID, domain, ports)
+		if err != nil {
+			log.Println(err)
+		}
+	}
+
+	if ipv6 != nil {
+		err := ipv6.maintain(api, zoneID, domain, ports)
+		if err != nil {
+			log.Println(err)
+		}
+	}
+}
+
+func shutdown(api *cloudflare.API, zoneID, domain string, ipv4 *ipv4, ipv6 *ipv6) {
+	log.Println("shutting down")
+
+	if ipv4 != nil {
+		err := ipv4.remove(api, zoneID, domain)
+		if err != nil {
+			log.Printf("remove IPv4 %v: %v", ipv4.addr, err)
+		}
+	}
+
+	if ipv6 != nil {
+		err := ipv6.remove(api, zoneID, domain)
+		if err != nil {
+			log.Printf("remove IPv6 %v: %v", ipv4.addr, err)
+		}
+	}
+
+	log.Println("await DNS TTL (120 seconds)")
+	time.Sleep(120 * time.Second)
 }
 
 func detectIPs(ipv4Enabled, ipv6Enabled bool) (*ipv4, *ipv6, error) {
