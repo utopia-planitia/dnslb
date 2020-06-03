@@ -3,9 +3,41 @@ package dnslb
 import (
 	"context"
 	"fmt"
+	"io"
 	"net"
+	"os"
 	"time"
 )
+
+// IPv4 print the detected local IPv4 address to stdout.
+func IPv4() error {
+	ip, err := myIP("tcp4")
+	if err != nil {
+		return err
+	}
+
+	_, err = io.WriteString(os.Stdout, ip+"\n")
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// IPv6 print the detected local IPv6 address to stdout.
+func IPv6() error {
+	ip, err := myIP("tcp6")
+	if err != nil {
+		return err
+	}
+
+	_, err = io.WriteString(os.Stdout, ip)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
 
 // Based on https://community.cloudflare.com/t/can-1-1-1-1-be-used-to-find-out-ones-public-ip-address/14971/5.
 func myIP(network string) (string, error) {

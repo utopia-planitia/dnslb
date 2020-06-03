@@ -10,13 +10,6 @@ import (
 
 func main() {
 	app := &cli.App{
-		Flags: []cli.Flag{
-			&cli.StringSliceFlag{
-				Name:     "port",
-				Usage:    "Port to check for health. Can be defined multiple times.",
-				Required: true,
-			},
-		},
 		Commands: []*cli.Command{
 			{
 				Name:  "endpoint",
@@ -32,6 +25,11 @@ func main() {
 						Usage: "use IPv6 for load balancing.",
 						Value: true,
 					},
+					&cli.StringSliceFlag{
+						Name:     "port",
+						Usage:    "Port to check for health. Can be defined multiple times.",
+						Required: true,
+					},
 				},
 				Action: func(c *cli.Context) error {
 					return dnslb.Endpoint(c.StringSlice("port"), c.Bool("ipv4"), c.Bool("ipv6"))
@@ -39,9 +37,30 @@ func main() {
 			},
 			{
 				Name:  "cleanup",
-				Usage: "check endpoints and remove unhealthy entries",
+				Usage: "Check DNS endpoints and remove unhealthy entries.",
+				Flags: []cli.Flag{
+					&cli.StringSliceFlag{
+						Name:     "port",
+						Usage:    "Port to check for health. Can be defined multiple times.",
+						Required: true,
+					},
+				},
 				Action: func(c *cli.Context) error {
 					return dnslb.Cleanup(c.StringSlice("port"))
+				},
+			},
+			{
+				Name:  "ipv4",
+				Usage: "Print the detected local IPv4 address.",
+				Action: func(c *cli.Context) error {
+					return dnslb.IPv4()
+				},
+			},
+			{
+				Name:  "ipv6",
+				Usage: "Print the detected local IPv6 address.",
+				Action: func(c *cli.Context) error {
+					return dnslb.IPv6()
 				},
 			},
 		},
