@@ -1,6 +1,6 @@
 module github.com/utopia-planitia/dnslb
 
-go 1.13
+go 1.16
 
 require (
 	github.com/cloudflare/cloudflare-go v0.13.8
