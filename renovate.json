@@ -4,6 +4,7 @@
   ],
   "pinDigests": true,
   "dependencyDashboard": true,
+  "prHourlyLimit": 0,
   "packageRules": [
     {
       "matchUpdateTypes": [
