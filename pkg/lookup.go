@@ -9,6 +9,11 @@ import (
 	"time"
 )
 
+const (
+	DNSServer           = "ns1.google.com"
+	WhatIsMyIPDNSServer = "o-o.myaddr.l.google.com"
+)
+
 // IPv4 print the detected local IPv4 address to stdout.
 func IPv4() error {
 	ip, err := myIP("tcp4")
@@ -46,13 +51,13 @@ func myIP(network string) (string, error) {
 
 	r := &net.Resolver{
 		Dial: func(ctx context.Context, _, _ string) (net.Conn, error) {
-			h := net.JoinHostPort("ns1.google.com", "53")
+			h := net.JoinHostPort(DNSServer, "53")
 			d := net.Dialer{}
 			return d.DialContext(ctx, network, h)
 		},
 	}
 
-	addrs, err := r.LookupTXT(ctx, "o-o.myaddr.l.google.com")
+	addrs, err := r.LookupTXT(ctx, WhatIsMyIPDNSServer)
 	if err != nil {
 		return "", err
 	}
