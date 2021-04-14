@@ -3,6 +3,7 @@
     "config:base"
   ],
   "pinDigests": true,
+  "dependencyDashboard": true,
   "regexManagers": [
     {
       "fileMatch": [
