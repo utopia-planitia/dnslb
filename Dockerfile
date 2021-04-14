@@ -1,5 +1,5 @@
 
-FROM golang:1.14.15-alpine as builder
+FROM golang:1.14.15-alpine@sha256:e196a762bd349b188d66c539354fc23f0e5a0178c214e6dfe4d7894c3c2753f1 as builder
 
 WORKDIR /go/src/dnslb
 COPY go.mod /go/src/dnslb
