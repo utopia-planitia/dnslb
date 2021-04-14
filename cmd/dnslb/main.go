@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 	"os"
+	"time"
 
 	"github.com/urfave/cli/v2"
 	dnslb "github.com/utopia-planitia/dnslb/pkg"
@@ -47,6 +48,25 @@ func main() {
 				},
 				Action: func(c *cli.Context) error {
 					return dnslb.Cleanup(c.StringSlice("port"))
+				},
+			},
+			{
+				Name:  "cleanup-loop",
+				Usage: "Check DNS endpoints and remove unhealthy entries again and again.",
+				Flags: []cli.Flag{
+					&cli.StringSliceFlag{
+						Name:     "port",
+						Usage:    "Port to check for health. Can be defined multiple times.",
+						Required: true,
+					},
+					&cli.DurationFlag{
+						Name:  "delay",
+						Usage: "Delay between cleanups.",
+						Value: time.Minute,
+					},
+				},
+				Action: func(c *cli.Context) error {
+					return dnslb.CleanupLoop(c.StringSlice("port"), c.Duration("delay"))
 				},
 			},
 			{

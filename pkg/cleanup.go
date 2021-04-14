@@ -4,9 +4,22 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"time"
 
 	"github.com/cloudflare/cloudflare-go"
 )
+
+// CleanupLoop executes a cleanup every delay
+func CleanupLoop(ports []string, delay time.Duration) error {
+	for {
+		err := Cleanup(ports)
+		if err != nil {
+			return fmt.Errorf("cleanup failed: %v", err)
+		}
+
+		time.Sleep(delay)
+	}
+}
 
 // Cleanup removes unhealthy endpoints.
 func Cleanup(ports []string) error {
