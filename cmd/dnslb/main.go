@@ -13,7 +13,7 @@ func main() {
 		Commands: []*cli.Command{
 			{
 				Name:  "endpoint",
-				Usage: "keep healthy endpoint in dns load balancer",
+				Usage: "Keep healthy endpoint in dns load balancer.",
 				Flags: []cli.Flag{
 					&cli.BoolFlag{
 						Name:  "ipv4",
