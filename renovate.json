@@ -16,6 +16,9 @@
       "automerge": true
     }
   ],
+  "postUpdateOptions": [
+    "gomodTidy"
+  ],
   "regexManagers": [
     {
       "fileMatch": [
