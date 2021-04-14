@@ -4,6 +4,8 @@ DNS Load Balancer runs as a sidecar for ingress and apiserver pods.
 
 Its purpose is to manage DNS entries, during node drains and failures.
 
+It currently only supports cloudflare.
+
 ## Life cycle
 
 While running, it checks the local port and adds or removes (on failure) its own IP to the subdomain.
