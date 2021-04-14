@@ -2,5 +2,17 @@
   "extends": [
     "config:base"
   ],
-  "pinDigests": true
+  "pinDigests": true,
+  "regexManagers": [
+    {
+      "fileMatch": [
+        "^.github/workflows/main.yml$"
+      ],
+      "matchStrings": [
+        "version: (?<currentValue>.*?)\n"
+      ],
+      "depNameTemplate": "golangci/golangci-lint",
+      "datasourceTemplate": "github-tags"
+    }
+  ]
 }
