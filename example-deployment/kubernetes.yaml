@@ -1,0 +1,97 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: apiserver-dns
+  namespace: kube-system
+type: Opaque
+data:
+  CF_API_KEY:   {{ .Cloudflare.Key            | b64encode }}
+  CF_API_EMAIL: {{ .Cloudflare.Email          | b64encode }}
+  CF_ZONE:      {{ .Cloudflare.Zone           | b64encode }}
+  CF_SUBDOMAIN: {{ .Cloudflare.Subdomains.API | b64encode }}
+---
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: apiserver-dns-cleanup
+  namespace: kube-system
+spec:
+  schedule: "*/2 * * * *"
+  concurrencyPolicy: Replace
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          hostNetwork: true
+          restartPolicy: OnFailure
+          containers:
+            - name: dnslb
+              image: utopiaplanitia/dnslb:v1.0.2
+              args:
+                - cleanup
+                - --port=6443
+              envFrom:
+                - secretRef:
+                    name: apiserver-dns
+              resources:
+                requests:
+                  memory: 50Mi
+                  cpu: 50m
+                limits:
+                  memory: 50Mi
+                  cpu: 50m
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: apiserver-dns
+  namespace: kube-system
+spec:
+  replicas: {{ .Nodes.MastersCount }}
+  selector:
+    matchLabels:
+      app: loadbalancer-apiserver
+  minReadySeconds: 5
+  strategy:
+    rollingUpdate:
+      maxUnavailable: 1
+  template:
+    metadata:
+      labels:
+        app: loadbalancer-apiserver
+    spec:
+      hostNetwork: true
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: node-role.kubernetes.io/master
+                operator: Exists
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+              - key: app
+                operator: In
+                values:
+                - loadbalancer-apiserver
+            topologyKey: "kubernetes.io/hostname"
+      terminationGracePeriodSeconds: 150
+      containers:
+        - name: dnslb
+          image: utopiaplanitia/dnslb:v1.0.2
+          args:
+            - endpoint
+            - --port=6443
+            - --ipv6=false
+          envFrom:
+            - secretRef:
+                name: apiserver-dns
+          resources:
+            requests:
+              memory: 50Mi
+              cpu: 50m
+            limits:
+              memory: 50Mi
+              cpu: 50m
