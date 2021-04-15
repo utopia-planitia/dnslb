@@ -7,6 +7,7 @@ import (
 
 	"github.com/urfave/cli/v2"
 	dnslb "github.com/utopia-planitia/dnslb/pkg"
+	"golang.org/x/net/context"
 )
 
 func main() {
@@ -33,7 +34,9 @@ func main() {
 					},
 				},
 				Action: func(c *cli.Context) error {
-					return dnslb.Endpoint(c.StringSlice("port"), c.Bool("ipv4"), c.Bool("ipv6"))
+					ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
+					defer cancel()
+					return dnslb.Endpoint(ctx, c.StringSlice("port"), c.Bool("ipv4"), c.Bool("ipv6"))
 				},
 			},
 			{
@@ -47,7 +50,9 @@ func main() {
 					},
 				},
 				Action: func(c *cli.Context) error {
-					return dnslb.Cleanup(c.StringSlice("port"))
+					ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
+					defer cancel()
+					return dnslb.Cleanup(ctx, c.StringSlice("port"))
 				},
 			},
 			{

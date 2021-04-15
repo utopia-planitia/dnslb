@@ -1,6 +1,7 @@
 package dnslb
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"os"
@@ -12,7 +13,7 @@ import (
 )
 
 // Endpoint runs the life cycle of a endpoint.
-func Endpoint(ports []string, ipv4Enabled, ipv6Enabled bool) error {
+func Endpoint(ctx context.Context, ports []string, ipv4Enabled, ipv6Enabled bool) error {
 	api, err := initAPI(os.Getenv("CF_API_TOKEN"), os.Getenv("CF_API_KEY"), os.Getenv("CF_API_EMAIL"))
 	if err != nil {
 		return fmt.Errorf("init api: %v", err)
@@ -51,10 +52,10 @@ func Endpoint(ports []string, ipv4Enabled, ipv6Enabled bool) error {
 	signal.Notify(sigs, syscall.SIGINT, syscall.SIGTERM)
 
 	for {
-		maintain(api, zoneID, domain, ports, ipv4, ipv6)
+		maintain(ctx, api, zoneID, domain, ports, ipv4, ipv6)
 		select {
 		case <-sigs:
-			shutdown(api, zoneID, domain, ipv4, ipv6)
+			shutdown(ctx, api, zoneID, domain, ipv4, ipv6)
 			return nil
 		case <-ticker.C:
 			continue
@@ -62,34 +63,34 @@ func Endpoint(ports []string, ipv4Enabled, ipv6Enabled bool) error {
 	}
 }
 
-func maintain(api *cloudflare.API, zoneID, domain string, ports []string, ipv4 *ipv4, ipv6 *ipv6) {
+func maintain(ctx context.Context, api *cloudflare.API, zoneID, domain string, ports []string, ipv4 *ipv4, ipv6 *ipv6) {
 	if ipv4 != nil {
-		err := ipv4.maintain(api, zoneID, domain, ports)
+		err := ipv4.maintain(ctx, api, zoneID, domain, ports)
 		if err != nil {
 			log.Println(err)
 		}
 	}
 
 	if ipv6 != nil {
-		err := ipv6.maintain(api, zoneID, domain, ports)
+		err := ipv6.maintain(ctx, api, zoneID, domain, ports)
 		if err != nil {
 			log.Println(err)
 		}
 	}
 }
 
-func shutdown(api *cloudflare.API, zoneID, domain string, ipv4 *ipv4, ipv6 *ipv6) {
+func shutdown(ctx context.Context, api *cloudflare.API, zoneID, domain string, ipv4 *ipv4, ipv6 *ipv6) {
 	log.Println("shutting down")
 
 	if ipv4 != nil {
-		err := ipv4.remove(api, zoneID, domain)
+		err := ipv4.remove(ctx, api, zoneID, domain)
 		if err != nil {
 			log.Printf("remove IPv4 %v: %v", ipv4.addr, err)
 		}
 	}
 
 	if ipv6 != nil {
-		err := ipv6.remove(api, zoneID, domain)
+		err := ipv6.remove(ctx, api, zoneID, domain)
 		if err != nil {
 			log.Printf("remove IPv6 %v: %v", ipv4.addr, err)
 		}

@@ -1,6 +1,7 @@
 package dnslb
 
 import (
+	"context"
 	"fmt"
 	"log"
 
@@ -19,9 +20,9 @@ type ip struct {
 	addr string
 }
 
-func (i ipv4) cleanup(api *cloudflare.API, zoneID, domain string, ports []string) error {
+func (i ipv4) cleanup(ctx context.Context, api *cloudflare.API, zoneID, domain string, ports []string) error {
 	if !i.healthy(ports) {
-		err := i.remove(api, zoneID, domain)
+		err := i.remove(ctx, api, zoneID, domain)
 		if err != nil {
 			return err
 		}
@@ -30,9 +31,9 @@ func (i ipv4) cleanup(api *cloudflare.API, zoneID, domain string, ports []string
 	return nil
 }
 
-func (i ipv6) cleanup(api *cloudflare.API, zoneID, domain string, ports []string) error {
+func (i ipv6) cleanup(ctx context.Context, api *cloudflare.API, zoneID, domain string, ports []string) error {
 	if !i.healthy(ports) {
-		err := i.remove(api, zoneID, domain)
+		err := i.remove(ctx, api, zoneID, domain)
 		if err != nil {
 			return err
 		}
@@ -41,13 +42,13 @@ func (i ipv6) cleanup(api *cloudflare.API, zoneID, domain string, ports []string
 	return nil
 }
 
-func (i ipv4) maintain(api *cloudflare.API, zoneID, domain string, ports []string) error {
+func (i ipv4) maintain(ctx context.Context, api *cloudflare.API, zoneID, domain string, ports []string) error {
 	action := i.remove
 	if i.healthy(ports) {
 		action = i.add
 	}
 
-	err := action(api, zoneID, domain)
+	err := action(ctx, api, zoneID, domain)
 	if err != nil {
 		return err
 	}
@@ -55,13 +56,13 @@ func (i ipv4) maintain(api *cloudflare.API, zoneID, domain string, ports []strin
 	return nil
 }
 
-func (i ipv6) maintain(api *cloudflare.API, zoneID, domain string, ports []string) error {
+func (i ipv6) maintain(ctx context.Context, api *cloudflare.API, zoneID, domain string, ports []string) error {
 	action := i.remove
 	if i.healthy(ports) {
 		action = i.add
 	}
 
-	err := action(api, zoneID, domain)
+	err := action(ctx, api, zoneID, domain)
 	if err != nil {
 		return err
 	}
@@ -74,22 +75,22 @@ func (i ip) healthy(ports []string) bool {
 	return ok
 }
 
-func (i ipv4) add(api *cloudflare.API, zoneID, domain string) error {
-	return ensureRecord(api, zoneID, domain, i.addr, "A")
+func (i ipv4) add(ctx context.Context, api *cloudflare.API, zoneID, domain string) error {
+	return ensureRecord(ctx, api, zoneID, domain, i.addr, "A")
 }
 
-func (i ipv6) add(api *cloudflare.API, zoneID, domain string) error {
-	return ensureRecord(api, zoneID, domain, i.addr, "AAAA")
+func (i ipv6) add(ctx context.Context, api *cloudflare.API, zoneID, domain string) error {
+	return ensureRecord(ctx, api, zoneID, domain, i.addr, "AAAA")
 }
 
-func (i ip) remove(api *cloudflare.API, zoneID, domain string) error {
-	return removeRecord(api, zoneID, domain, i.addr)
+func (i ip) remove(ctx context.Context, api *cloudflare.API, zoneID, domain string) error {
+	return removeRecord(ctx, api, zoneID, domain, i.addr)
 }
 
-func ensureRecord(api *cloudflare.API, zoneID, domain, ip, typee string) error {
+func ensureRecord(ctx context.Context, api *cloudflare.API, zoneID, domain, ip, typee string) error {
 	log.Printf("ensure IP: %v", ip)
 
-	records, err := api.DNSRecords(zoneID, cloudflare.DNSRecord{
+	records, err := api.DNSRecords(ctx, zoneID, cloudflare.DNSRecord{
 		Name:    domain,
 		Content: ip,
 	})
@@ -101,7 +102,7 @@ func ensureRecord(api *cloudflare.API, zoneID, domain, ip, typee string) error {
 		return nil
 	}
 
-	_, err = api.CreateDNSRecord(zoneID, cloudflare.DNSRecord{
+	_, err = api.CreateDNSRecord(ctx, zoneID, cloudflare.DNSRecord{
 		Name:    domain,
 		Content: ip,
 		Type:    typee,
@@ -116,10 +117,10 @@ func ensureRecord(api *cloudflare.API, zoneID, domain, ip, typee string) error {
 	return nil
 }
 
-func removeRecord(api *cloudflare.API, zoneID, domain, ip string) error {
+func removeRecord(ctx context.Context, api *cloudflare.API, zoneID, domain, ip string) error {
 	log.Printf("remove IP: %v", ip)
 
-	records, err := api.DNSRecords(zoneID, cloudflare.DNSRecord{
+	records, err := api.DNSRecords(ctx, zoneID, cloudflare.DNSRecord{
 		Name:    domain,
 		Content: ip,
 	})
@@ -128,7 +129,7 @@ func removeRecord(api *cloudflare.API, zoneID, domain, ip string) error {
 	}
 
 	for _, record := range records {
-		err = api.DeleteDNSRecord(zoneID, record.ID)
+		err = api.DeleteDNSRecord(ctx, zoneID, record.ID)
 		if err != nil {
 			return fmt.Errorf("delete record %v: %v", record.ID, err)
 		}

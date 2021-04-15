@@ -1,6 +1,7 @@
 package dnslb
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"os"
@@ -12,9 +13,14 @@ import (
 // CleanupLoop executes a cleanup every delay
 func CleanupLoop(ports []string, delay time.Duration) error {
 	for {
-		err := Cleanup(ports)
-		if err != nil {
-			return fmt.Errorf("cleanup failed: %v", err)
+		{
+			ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
+			defer cancel()
+
+			err := Cleanup(ctx, ports)
+			if err != nil {
+				return fmt.Errorf("cleanup failed: %v", err)
+			}
 		}
 
 		time.Sleep(delay)
@@ -22,7 +28,7 @@ func CleanupLoop(ports []string, delay time.Duration) error {
 }
 
 // Cleanup removes unhealthy endpoints.
-func Cleanup(ports []string) error {
+func Cleanup(ctx context.Context, ports []string) error {
 	api, err := initAPI(os.Getenv("CF_API_TOKEN"), os.Getenv("CF_API_KEY"), os.Getenv("CF_API_EMAIL"))
 	if err != nil {
 		return fmt.Errorf("init api: %v", err)
@@ -49,7 +55,7 @@ func Cleanup(ports []string) error {
 
 	log.Printf("ports: %v", ports)
 
-	records, err := api.DNSRecords(zoneID, cloudflare.DNSRecord{
+	records, err := api.DNSRecords(ctx, zoneID, cloudflare.DNSRecord{
 		Name: subdomain + "." + zone,
 	})
 	if err != nil {
@@ -63,14 +69,14 @@ func Cleanup(ports []string) error {
 		case "A":
 			ipv4 := &ipv4{ip: ip{addr: record.Content}}
 
-			err := ipv4.cleanup(api, zoneID, domain, ports)
+			err := ipv4.cleanup(ctx, api, zoneID, domain, ports)
 			if err != nil {
 				log.Printf("cleanup record %s: %v", record.Content, err)
 			}
 		case "AAAA":
 			ipv6 := &ipv6{ip: ip{addr: record.Content}}
 
-			err := ipv6.cleanup(api, zoneID, domain, ports)
+			err := ipv6.cleanup(ctx, api, zoneID, domain, ports)
 			if err != nil {
 				log.Printf("cleanup record %s: %v", record.Content, err)
 			}
