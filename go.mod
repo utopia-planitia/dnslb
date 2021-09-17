@@ -5,5 +5,5 @@ go 1.16
 require (
 	github.com/cloudflare/cloudflare-go v0.23.0
 	github.com/urfave/cli/v2 v2.3.0
-	golang.org/x/net v0.0.0-20210916014120-12bc252f5db8
+	golang.org/x/net v0.0.0-20210917163549-3c21e5b27794
 )
