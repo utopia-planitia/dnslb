@@ -26,7 +26,7 @@ spec:
           restartPolicy: OnFailure
           containers:
             - name: dnslb
-              image: ghcr.io/utopia-planitia/dnslb:latest@sha256:21b3fd6367beb1d0cb34ca108d6410b7e7bf69ae79753d2626192bbc5950cacd
+              image: ghcr.io/utopia-planitia/dnslb:latest@sha256:8eee63ba41b8662d35188872cf052fcf2bfe3b4bce23c85beb2e8a9dbd8675e8
               args:
                 - cleanup
                 - --port=6443
@@ -80,7 +80,7 @@ spec:
       terminationGracePeriodSeconds: 150
       containers:
         - name: dnslb
-          image: ghcr.io/utopia-planitia/dnslb:latest@sha256:21b3fd6367beb1d0cb34ca108d6410b7e7bf69ae79753d2626192bbc5950cacd
+          image: ghcr.io/utopia-planitia/dnslb:latest@sha256:8eee63ba41b8662d35188872cf052fcf2bfe3b4bce23c85beb2e8a9dbd8675e8
           args:
             - endpoint
             - --port=6443
