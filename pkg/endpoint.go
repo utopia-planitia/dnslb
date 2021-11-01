@@ -53,9 +53,17 @@ func Endpoint(ctx context.Context, ports []string, ipv4Enabled, ipv6Enabled bool
 
 	for {
 		maintain(ctx, api, zoneID, domain, ports, ipv4, ipv6)
+
 		select {
 		case <-sigs:
+			ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+			defer cancel()
+
 			shutdown(ctx, api, zoneID, domain, ipv4, ipv6)
+
+			log.Println("await DNS TTL (120 seconds)")
+			time.Sleep(120 * time.Second)
+
 			return nil
 		case <-ticker.C:
 			continue
@@ -95,9 +103,6 @@ func shutdown(ctx context.Context, api *cloudflare.API, zoneID, domain string, i
 			log.Printf("remove IPv6 %v: %v", ipv4.addr, err)
 		}
 	}
-
-	log.Println("await DNS TTL (120 seconds)")
-	time.Sleep(120 * time.Second)
 }
 
 func detectIPs(ipv4Enabled, ipv6Enabled bool) (*ipv4, *ipv6, error) {
