@@ -56,15 +56,17 @@ func Endpoint(ctx context.Context, ports []string, ipv4Enabled, ipv6Enabled bool
 
 		select {
 		case <-sigs:
-			ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-			defer cancel()
+			{
+				ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+				defer cancel()
 
-			shutdown(ctx, api, zoneID, domain, ipv4, ipv6)
+				shutdown(ctx, api, zoneID, domain, ipv4, ipv6)
 
-			log.Println("await DNS TTL (120 seconds)")
-			time.Sleep(120 * time.Second)
+				log.Println("await DNS TTL (120 seconds)")
+				time.Sleep(120 * time.Second)
 
-			return nil
+				return nil
+			}
 		case <-ticker.C:
 			continue
 		}
