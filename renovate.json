@@ -21,7 +21,7 @@
   "packageRules": [
       {
           "matchPackageNames": [
-              "ghcr.io/utopia-planitia/dnslb:latest"
+              "ghcr.io/utopia-planitia/dnslb"
           ],
           "enabled": false,
           "pinDigests": false
