@@ -11,16 +11,21 @@ import (
 )
 
 // CleanupLoop executes a cleanup every delay
-func CleanupLoop(ports []string, delay time.Duration) error {
+func CleanupLoop(ctx context.Context, ports []string, delay time.Duration) error {
 	for {
-		{
-			ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
+		err := func() error {
+			ctx, cancel := context.WithTimeout(ctx, time.Minute)
 			defer cancel()
 
 			err := Cleanup(ctx, ports)
 			if err != nil {
 				return fmt.Errorf("cleanup failed: %v", err)
 			}
+
+			return nil
+		}()
+		if err != nil {
+			return err
 		}
 
 		time.Sleep(delay)
