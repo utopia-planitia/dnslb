@@ -4,5 +4,5 @@ go 1.16
 
 require (
 	github.com/cloudflare/cloudflare-go v0.44.0
-	github.com/urfave/cli/v2 v2.10.3
+	github.com/urfave/cli/v2 v2.11.0
 )
