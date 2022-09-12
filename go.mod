@@ -4,7 +4,7 @@ go 1.19
 
 require (
 	github.com/cloudflare/cloudflare-go v0.49.0
-	github.com/urfave/cli/v2 v2.16.0
+	github.com/urfave/cli/v2 v2.16.2
 )
 
 require (
