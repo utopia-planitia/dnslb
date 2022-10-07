@@ -10,7 +10,7 @@ data:
   CF_ZONE:      {{ .Cloudflare.Zone           | b64encode }}
   CF_SUBDOMAIN: {{ .Cloudflare.Subdomains.API | b64encode }}
 ---
-apiVersion: batch/v1beta1
+apiVersion: batch/v1
 kind: CronJob
 metadata:
   name: apiserver-dns-cleanup
