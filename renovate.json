@@ -30,7 +30,7 @@
   "regexManagers": [
     {
       "fileMatch": [
-        "^.github/workflows/main.yml$"
+        "^.github/workflows/linting.yml$"
       ],
       "matchStrings": [
         "version: (?<currentValue>.*?)\n"
