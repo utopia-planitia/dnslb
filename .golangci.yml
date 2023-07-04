@@ -12,53 +12,47 @@ issues:
 
 linters:
   enable:
-    - govet
-    - errcheck
-    - staticcheck
-    - unused
-    - gosimple
-    - structcheck
-    - varcheck
-    - ineffassign
-    - deadcode
-    - typecheck
-
     - bodyclose
-    - golint
-    - rowserrcheck
-    - stylecheck
-    - gosec
-    - interfacer
-    - unconvert
-    - dupl
-    - goconst
-    - gocyclo
-    - gocognit
-#    - asciicheck
-    - gofmt
-#    - simplificatio
-    - goimports
-    - maligned
     - depguard
-    - misspell
-    - lll
-    - unparam
     - dogsled
+    - dupl
+    - errcheck
+    - exportloopref
+    - gochecknoglobals
+    - gochecknoinits
+    - gocognit
+    - goconst
+    - gocritic
+    - gocyclo
+    - godox
+    - gofmt
+    - goimports
+    - goprintffuncname
+    - gosec
+    - gosimple
+    - govet
+    - ineffassign
+    - lll
+    - misspell
     - nakedret
     - prealloc
-    - scopelint
-    - gocritic
-    - gochecknoinits
-    - gochecknoglobals
-    - godox
-#    - funlen
+    - revive
+    - rowserrcheck
+    - staticcheck
+    - stylecheck
+    - typecheck
+    - unconvert
+    - unparam
+    - unused
     - whitespace
     - wsl
-    - goprintffuncname
-#    - gomnd
-#    - goerr113
-#    - gomodguard
-#    - godot
-#    - testpackage
-#    - nestif
-#    - nolintlint
+
+linters-settings:
+  depguard:
+    rules:
+      Main:
+        allow:
+          - '$gostd'
+          - 'github.com/cloudflare/cloudflare-go'
+          - 'github.com/urfave/cli/v2'
+          - 'github.com/utopia-planitia/dnslb/pkg'
