@@ -46,3 +46,13 @@ linters:
     - unused
     - whitespace
     - wsl
+
+linters-settings:
+  depguard:
+    rules:
+      Main:
+        allow:
+          - '$gostd'
+          - 'github.com/cloudflare/cloudflare-go'
+          - 'github.com/urfave/cli/v2'
+          - 'github.com/utopia-planitia/dnslb/pkg'
