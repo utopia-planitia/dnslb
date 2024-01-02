@@ -1,31 +1,31 @@
 {
   "extends": [
-      "config:base"
+    "config:base"
   ],
   "pinDigests": true,
   "postUpdateOptions": [
-      "gomodTidy",
-      "gomodUpdateImportPaths"
+    "gomodTidy",
+    "gomodUpdateImportPaths"
   ],
   "prHourlyLimit": 0,
   "labels": [
-      "renovate-bot"
+    "renovate-bot"
   ],
   "automerge": true,
   "automergeType": "pr",
   "kubernetes": {
-      "fileMatch": [
-          "\\.yaml$"
-      ]
+    "fileMatch": [
+      "\\.yaml$"
+    ]
   },
   "packageRules": [
-      {
-          "matchPackageNames": [
-              "ghcr.io/utopia-planitia/dnslb"
-          ],
-          "enabled": false,
-          "pinDigests": false
-      }
+    {
+      "matchPackageNames": [
+        "ghcr.io/utopia-planitia/dnslb"
+      ],
+      "enabled": false,
+      "pinDigests": false
+    }
   ],
   "regexManagers": [
     {
