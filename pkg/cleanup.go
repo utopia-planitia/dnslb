@@ -60,7 +60,7 @@ func Cleanup(ctx context.Context, ports []string) error {
 
 	log.Printf("ports: %v", ports)
 
-	records, err := api.DNSRecords(ctx, zoneID, cloudflare.DNSRecord{
+	records, _, err := api.ListDNSRecords(ctx, cloudflare.ZoneIdentifier(zoneID), cloudflare.ListDNSRecordsParams{
 		Name: subdomain + "." + zone,
 	})
 	if err != nil {

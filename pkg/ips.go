@@ -90,19 +90,19 @@ func (i ip) remove(ctx context.Context, api *cloudflare.API, zoneID, domain stri
 func ensureRecord(ctx context.Context, api *cloudflare.API, zoneID, domain, ip, typee string) error {
 	log.Printf("ensure IP: %v", ip)
 
-	records, err := api.DNSRecords(ctx, zoneID, cloudflare.DNSRecord{
+	records, _, err := api.ListDNSRecords(ctx, cloudflare.ZoneIdentifier(zoneID), cloudflare.ListDNSRecordsParams{
 		Name:    domain,
 		Content: ip,
 	})
 	if err != nil {
-		return fmt.Errorf("lookup record %v/%v: %v", domain, ip, err)
+		return fmt.Errorf("lookup records %v/%v: %v", domain, ip, err)
 	}
 
 	if len(records) > 0 {
 		return nil
 	}
 
-	_, err = api.CreateDNSRecord(ctx, zoneID, cloudflare.DNSRecord{
+	_, err = api.CreateDNSRecord(ctx, cloudflare.ZoneIdentifier(zoneID), cloudflare.CreateDNSRecordParams{
 		Name:    domain,
 		Content: ip,
 		Type:    typee,
@@ -120,7 +120,7 @@ func ensureRecord(ctx context.Context, api *cloudflare.API, zoneID, domain, ip, 
 func removeRecord(ctx context.Context, api *cloudflare.API, zoneID, domain, ip string) error {
 	log.Printf("remove IP: %v", ip)
 
-	records, err := api.DNSRecords(ctx, zoneID, cloudflare.DNSRecord{
+	records, _, err := api.ListDNSRecords(ctx, cloudflare.ZoneIdentifier(zoneID), cloudflare.ListDNSRecordsParams{
 		Name:    domain,
 		Content: ip,
 	})
@@ -129,7 +129,7 @@ func removeRecord(ctx context.Context, api *cloudflare.API, zoneID, domain, ip s
 	}
 
 	for _, record := range records {
-		err = api.DeleteDNSRecord(ctx, zoneID, record.ID)
+		err = api.DeleteDNSRecord(ctx, cloudflare.ZoneIdentifier(zoneID), record.ID)
 		if err != nil {
 			return fmt.Errorf("delete record %v: %v", record.ID, err)
 		}
