@@ -72,14 +72,14 @@ func main() {
 			{
 				Name:  "ipv4",
 				Usage: "Print the detected local IPv4 address.",
-				Action: func(c *cli.Context) error {
+				Action: func(_ *cli.Context) error {
 					return dnslb.IPv4()
 				},
 			},
 			{
 				Name:  "ipv6",
 				Usage: "Print the detected local IPv6 address.",
-				Action: func(c *cli.Context) error {
+				Action: func(_ *cli.Context) error {
 					return dnslb.IPv6()
 				},
 			},
