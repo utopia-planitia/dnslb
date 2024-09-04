@@ -12,7 +12,7 @@ COPY cmd /go/src/dnslb/cmd
 COPY pkg /go/src/dnslb/pkg
 RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags="-w -s -extldflags '-static'" -o /go/bin/dnslb ./cmd/dnslb
 
-FROM gcr.io/distroless/static@sha256:ce46866b3a5170db3b49364900fb3168dc0833dfb46c26da5c77f22abb01d8c3
+FROM gcr.io/distroless/static@sha256:95eb83a44a62c1c27e5f0b38d26085c486d71ece83dd64540b7209536bb13f6d
 
 COPY --from=builder /go/bin/dnslb /dnslb
 ENTRYPOINT ["/dnslb"]
