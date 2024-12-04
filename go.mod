@@ -1,9 +1,11 @@
 module github.com/utopia-planitia/dnslb
 
-go 1.19
+go 1.21
+
+toolchain go1.23.4
 
 require (
-	github.com/cloudflare/cloudflare-go v0.110.0
+	github.com/cloudflare/cloudflare-go v0.111.0
 	github.com/urfave/cli/v2 v2.27.5
 )
 
