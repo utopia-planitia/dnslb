@@ -9,7 +9,7 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/cloudflare/cloudflare-go"
+	"github.com/cloudflare/cloudflare-go/v4"
 )
 
 // Endpoint runs the life cycle of a endpoint.
