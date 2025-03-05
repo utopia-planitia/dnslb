@@ -6,7 +6,7 @@ toolchain go1.24.1
 
 require (
 	github.com/cloudflare/cloudflare-go v0.115.0
-	github.com/urfave/cli/v2 v2.27.5
+	github.com/urfave/cli/v2 v2.27.6
 )
 
 require (
