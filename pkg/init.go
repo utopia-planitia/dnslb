@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/cloudflare/cloudflare-go"
+	"github.com/cloudflare/cloudflare-go/v6"
 )
 
 func initAPI(apiToken, apiKey, apiEmail string) (api *cloudflare.API, err error) {
