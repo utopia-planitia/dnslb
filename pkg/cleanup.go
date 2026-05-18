@@ -7,7 +7,7 @@ import (
 	"os"
 	"time"
 
-	"github.com/cloudflare/cloudflare-go"
+	"github.com/cloudflare/cloudflare-go/v6"
 )
 
 // CleanupLoop executes a cleanup every delay
