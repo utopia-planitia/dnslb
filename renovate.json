@@ -16,8 +16,8 @@
   "automerge": true,
   "automergeType": "pr",
   "kubernetes": {
-    "fileMatch": [
-      "\\.yaml$"
+    "managerFilePatterns": [
+      "/\\.yaml$/"
     ]
   },
   "packageRules": [
@@ -32,8 +32,8 @@
   "customManagers": [
     {
       "customType": "regex",
-      "fileMatch": [
-        ".*"
+      "managerFilePatterns": [
+        "/.*/"
       ],
       "matchStrings": [
         "\\s+[\"']?(?<currentValue>[^\\s\"']+?)[\"']?\\s+# renovate: datasource=(?<datasource>[^\\s]+) depName=(?<depName>[^\\s]+)"
