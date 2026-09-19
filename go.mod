@@ -2,7 +2,7 @@ module github.com/utopia-planitia/dnslb
 
 go 1.21
 
-toolchain go1.26.6
+toolchain go1.27.1
 
 require (
 	github.com/cloudflare/cloudflare-go v0.118.0
